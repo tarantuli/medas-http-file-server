@@ -1,6 +1,6 @@
 {
-    "name": "morphp/medas-placeholder",
-    "description": "Medas placeholder",
+    "name": "morphp/medas-file-server",
+    "description": "Medas file server",
     "authors": [
         {
             "name": "Patrick Morpey",
@@ -19,8 +19,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Medas\\Placeholder\\": "src/",
-            "Medas\\PlaceholderTest\\": "tests/"
+            "Medas\\FileServer\\": "src/",
+            "Medas\\FileServerTest\\": "tests/"
         }
     }
 }
