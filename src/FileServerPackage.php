@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Medas\FileServer;
 
 use Medas\Core\AsSingleton;
+use Medas\HttpRequestHandler\HttpRequestHandlerPackage;
 use Medas\ServiceManager\BasePackage;
 
 class FileServerPackage extends BasePackage
@@ -13,7 +14,9 @@ class FileServerPackage extends BasePackage
 
     public function dependencies(): array
     {
-        return [];
+        return [
+            HttpRequestHandlerPackage::instance(),
+        ];
     }
 
     public function sourceDirectory(): string
