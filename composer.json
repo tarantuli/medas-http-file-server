@@ -1,6 +1,6 @@
 {
-    "name": "morphp/medas-file-server",
-    "description": "Medas file server",
+    "name": "morphp/medas-http-file-server",
+    "description": "Medas http file server",
     "authors": [
         {
             "name": "Patrick Morpey",
@@ -15,14 +15,17 @@
         "morphp/medas-http-request-handler": "dev-dev"
     },
     "require-dev": {
+        "morphp/medas-config-manager": "dev-dev",
+        "morphp/medas-config-options": "dev-dev",
+        "morphp/medas-file-system": "dev-dev",
         "morphp/medas-http-file-client": "dev-dev",
         "morphp/medas-service-manager": "dev-dev",
         "phpunit/phpunit": "^9.5"
     },
     "autoload": {
         "psr-4": {
-            "Medas\\FileServer\\": "src/",
-            "Medas\\FileServerTest\\": "tests/"
+            "Medas\\HttpFileServer\\": "src/",
+            "Medas\\HttpFileServerTest\\": "tests/"
         }
     }
 }

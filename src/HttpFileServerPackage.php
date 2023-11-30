@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Medas\FileServer;
+namespace Medas\HttpFileServer;
 
 use Medas\Core\AsSingleton;
 use Medas\HttpRequestHandler\HttpRequestHandlerPackage;
 use Medas\ServiceManager\BasePackage;
 
-class FileServerPackage extends BasePackage
+class HttpFileServerPackage extends BasePackage
 {
     use AsSingleton;
 
