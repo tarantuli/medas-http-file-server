@@ -15,6 +15,7 @@
         "morphp/medas-http-request-handler": "dev-dev"
     },
     "require-dev": {
+        "morphp/medas-http-file-client": "dev-dev",
         "morphp/medas-service-manager": "dev-dev",
         "phpunit/phpunit": "^9.5"
     },
