@@ -59,12 +59,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:tarantuli/medas-http-client.git",
-                "reference": "3e0acd015820b3f3f3a298de558624209a04d980"
+                "reference": "ceeb135efd7ec091fd53af225dd3aa5a64f99321"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tarantuli/medas-http-client/zipball/3e0acd015820b3f3f3a298de558624209a04d980",
-                "reference": "3e0acd015820b3f3f3a298de558624209a04d980",
+                "url": "https://api.github.com/repos/tarantuli/medas-http-client/zipball/ceeb135efd7ec091fd53af225dd3aa5a64f99321",
+                "reference": "ceeb135efd7ec091fd53af225dd3aa5a64f99321",
                 "shasum": ""
             },
             "require": {
@@ -94,7 +94,7 @@
                 "source": "https://github.com/tarantuli/medas-http-client/tree/dev",
                 "issues": "https://github.com/tarantuli/medas-http-client/issues"
             },
-            "time": "2023-12-01T13:51:59+00:00"
+            "time": "2023-12-01T14:27:18+00:00"
         },
         {
             "name": "morphp/medas-http-request-handler",
@@ -502,12 +502,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:tarantuli/medas-http-file-client.git",
-                "reference": "8816600ecb6e0e0837f4d77c8bf77aaa698c45a6"
+                "reference": "89143b493a7012664fb7866c69c405702e374850"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tarantuli/medas-http-file-client/zipball/8816600ecb6e0e0837f4d77c8bf77aaa698c45a6",
-                "reference": "8816600ecb6e0e0837f4d77c8bf77aaa698c45a6",
+                "url": "https://api.github.com/repos/tarantuli/medas-http-file-client/zipball/89143b493a7012664fb7866c69c405702e374850",
+                "reference": "89143b493a7012664fb7866c69c405702e374850",
                 "shasum": ""
             },
             "require": {
@@ -537,7 +537,7 @@
                 "source": "https://github.com/tarantuli/medas-http-file-client/tree/dev",
                 "issues": "https://github.com/tarantuli/medas-http-file-client/issues"
             },
-            "time": "2023-12-01T13:54:15+00:00"
+            "time": "2023-12-01T14:27:48+00:00"
         },
         {
             "name": "morphp/medas-object-instantiator",
