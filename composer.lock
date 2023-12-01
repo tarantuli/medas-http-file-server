@@ -59,12 +59,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:tarantuli/medas-http-client.git",
-                "reference": "ceeb135efd7ec091fd53af225dd3aa5a64f99321"
+                "reference": "401227b0c1cf440321e642f908379eac93b14d5a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tarantuli/medas-http-client/zipball/ceeb135efd7ec091fd53af225dd3aa5a64f99321",
-                "reference": "ceeb135efd7ec091fd53af225dd3aa5a64f99321",
+                "url": "https://api.github.com/repos/tarantuli/medas-http-client/zipball/401227b0c1cf440321e642f908379eac93b14d5a",
+                "reference": "401227b0c1cf440321e642f908379eac93b14d5a",
                 "shasum": ""
             },
             "require": {
@@ -94,7 +94,7 @@
                 "source": "https://github.com/tarantuli/medas-http-client/tree/dev",
                 "issues": "https://github.com/tarantuli/medas-http-client/issues"
             },
-            "time": "2023-12-01T14:27:18+00:00"
+            "time": "2023-12-01T14:46:32+00:00"
         },
         {
             "name": "morphp/medas-http-request-handler",

@@ -11,6 +11,7 @@ class StoreTest extends BaseTestClass
     public function testBasicStorage(): void
     {
         $path = $this->mockUpPath('basic/file-to-store.txt');
+        $content = "This is content \xF0\xA4\xAD\xA2\xF0\xA4\xAD\xA2\xF0\xA4\xAD :-)";
 
         // Set up the test
         if (file_exists($path)) {
@@ -19,10 +20,12 @@ class StoreTest extends BaseTestClass
 
         $response = service(Controller::class)->store(
             'basic/file-to-store.txt',
-            'This is content.',
+            $content,
             client: $this->client()
         );
 
         self::assertTrue($response);
+
+        self::assertEquals($content, file_get_contents($path));
     }
 }
