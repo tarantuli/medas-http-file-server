@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Medas\HttpFileServer;
 
 use Medas\Core\AsSingleton;
+use Medas\HttpClient\HttpClientPackage;
 use Medas\HttpRequestHandler\HttpRequestHandlerPackage;
 use Medas\ServiceManager\BasePackage;
 
@@ -15,6 +16,7 @@ class HttpFileServerPackage extends BasePackage
     public function dependencies(): array
     {
         return [
+            HttpClientPackage::instance(),
             HttpRequestHandlerPackage::instance(),
         ];
     }

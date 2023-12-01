@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d219401b5f98e5bbbdeb8472abb5a3df",
+    "content-hash": "fb2744ef917f11f8f345f5efa8943e8b",
     "packages": [
         {
             "name": "morphp/medas-core",
@@ -52,6 +52,49 @@
                 "issues": "https://github.com/tarantuli/medas-core/issues"
             },
             "time": "2023-12-01T10:52:36+00:00"
+        },
+        {
+            "name": "morphp/medas-http-client",
+            "version": "dev-dev",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:tarantuli/medas-http-client.git",
+                "reference": "c2d1e0ca6079f32eb0d8a4e5dbe6d114284f86d4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tarantuli/medas-http-client/zipball/c2d1e0ca6079f32eb0d8a4e5dbe6d114284f86d4",
+                "reference": "c2d1e0ca6079f32eb0d8a4e5dbe6d114284f86d4",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-mbstring": "*",
+                "morphp/medas-core": "dev-dev"
+            },
+            "require-dev": {
+                "morphp/medas-service-manager": "dev-dev",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Medas\\HttpClient\\": "src/",
+                    "Medas\\HttpClientTest\\": "tests/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Patrick Morpey",
+                    "email": "patrick@morphp.nl"
+                }
+            ],
+            "description": "Medas http client",
+            "support": {
+                "source": "https://github.com/tarantuli/medas-http-client/tree/dev",
+                "issues": "https://github.com/tarantuli/medas-http-client/issues"
+            },
+            "time": "2023-12-01T10:38:07+00:00"
         },
         {
             "name": "morphp/medas-http-request-handler",
@@ -452,49 +495,6 @@
                 "issues": "https://github.com/tarantuli/medas-file-system/issues"
             },
             "time": "2023-11-27T13:51:20+00:00"
-        },
-        {
-            "name": "morphp/medas-http-client",
-            "version": "dev-dev",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:tarantuli/medas-http-client.git",
-                "reference": "c2d1e0ca6079f32eb0d8a4e5dbe6d114284f86d4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/tarantuli/medas-http-client/zipball/c2d1e0ca6079f32eb0d8a4e5dbe6d114284f86d4",
-                "reference": "c2d1e0ca6079f32eb0d8a4e5dbe6d114284f86d4",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "ext-mbstring": "*",
-                "morphp/medas-core": "dev-dev"
-            },
-            "require-dev": {
-                "morphp/medas-service-manager": "dev-dev",
-                "phpunit/phpunit": "^9.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Medas\\HttpClient\\": "src/",
-                    "Medas\\HttpClientTest\\": "tests/"
-                }
-            },
-            "authors": [
-                {
-                    "name": "Patrick Morpey",
-                    "email": "patrick@morphp.nl"
-                }
-            ],
-            "description": "Medas http client",
-            "support": {
-                "source": "https://github.com/tarantuli/medas-http-client/tree/dev",
-                "issues": "https://github.com/tarantuli/medas-http-client/issues"
-            },
-            "time": "2023-12-01T10:38:07+00:00"
         },
         {
             "name": "morphp/medas-http-file-client",
@@ -2843,6 +2843,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "morphp/medas-core": 20,
+        "morphp/medas-http-client": 20,
         "morphp/medas-http-request-handler": 20,
         "morphp/medas-config-manager": 20,
         "morphp/medas-config-options": 20,
