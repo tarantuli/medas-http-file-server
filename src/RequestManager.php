@@ -15,6 +15,6 @@ readonly class RequestManager
 
         unset($arguments['path']);
 
-        return new Request($path, $arguments, 'php://input', $_SERVER['CONTENT_TYPE']);
+        return new Request($path, $arguments, 'php://input', $_SERVER['CONTENT_TYPE'] ?? null);
     }
 }

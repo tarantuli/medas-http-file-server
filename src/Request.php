@@ -10,7 +10,7 @@ readonly class Request
         public string $path,
         public array  $arguments,
         public string $bodyPath,
-        public string $bodyEncoding,
+        public string|null $bodyEncoding,
     )
     {
     }
