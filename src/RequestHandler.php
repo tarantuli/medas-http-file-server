@@ -10,16 +10,31 @@ use Medas\Core\Attributes\Service;
 readonly class RequestHandler
 {
     public function __construct(
-        private GetHandler $getHandler,
+        private Handlers\DeleteHandler $deleteHandler,
+        private Handlers\GetHandler    $getHandler,
+        private RequestManager         $requestManager,
+        private Handlers\PostHandler   $postHandler,
     )
     {
     }
 
-    public function handle(Server $server, string $method, string $path): Response
+    public function handle(Server $server, string $method, array $arguments): void
     {
-        return match (strtoupper($method)) {
-            'GET' => $this->getHandler->handle($server, $path),
-            default => throw new Exceptions\InvalidRequestMethod($method),
-        };
+        try {
+            $request = $this->requestManager->compile($arguments);
+            $response = match (strtoupper($method)) {
+                'GET' => $this->getHandler->handle($server, $request),
+                'POST' => $this->postHandler->handle($server, $request),
+                'DELETE' => $this->deleteHandler->handle($server, $request),
+                default => new Response(400),
+            };
+        }
+        catch (\Exception $exception) {
+            $response = new Response(500, $exception->getMessage());
+        }
+
+        http_response_code($response->code);
+
+        echo $response->content;
     }
 }

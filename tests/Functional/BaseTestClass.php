@@ -13,4 +13,9 @@ abstract class BaseTestClass extends TestCase
     {
         return new Client('http://localhost/medas/http-file-server/tests/MockUps/');
     }
+
+    protected function mockUpPath(string $subPath): string
+    {
+        return __DIR__ . '/../MockUps/files/' . $subPath;
+    }
 }

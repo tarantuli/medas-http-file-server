@@ -1,0 +1,45 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Medas\HttpFileServer\Handlers;
+
+use Medas\Core\Attributes\Service;
+use Medas\FileSystem\DirectoryManager;
+use Medas\HttpClient\BodyHandler;
+use Medas\HttpFileServer\{Request, Response, Server};
+
+#[Service]
+readonly class PostHandler
+{
+    public function __construct(
+        private DirectoryManager $directoryManager,
+        private BodyHandler      $bodyHandler,
+    )
+    {
+    }
+
+    public function handle(Server $server, Request $request): Response
+    {
+        $path = $server->directory
+            . DIRECTORY_SEPARATOR
+            . str_replace('/', DIRECTORY_SEPARATOR, $request->path);
+
+        $this->directoryManager->create(pathinfo($path, PATHINFO_DIRNAME));
+
+        $body = $this->bodyHandler->parseString(
+            file_get_contents($request->bodyPath),
+            $request->bodyEncoding
+        );
+
+        if (false === file_put_contents($path, $body['content'])) {
+            return new Response(400);
+        }
+
+        if ($body['modificationTime'] !== null) {
+            touch($path, $body['modificationTime']);
+        }
+
+        return new Response(201);
+    }
+}
