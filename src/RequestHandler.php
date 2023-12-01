@@ -12,8 +12,8 @@ readonly class RequestHandler
     public function __construct(
         private Handlers\DeleteHandler $deleteHandler,
         private Handlers\GetHandler    $getHandler,
-        private RequestManager         $requestManager,
         private Handlers\PostHandler   $postHandler,
+        private RequestManager         $requestManager,
     )
     {
     }
@@ -34,6 +34,10 @@ readonly class RequestHandler
         }
 
         http_response_code($response->code);
+
+        if ($response->type !== null) {
+            header(sprintf('Content-type: %s', $response->type));
+        }
 
         echo $response->content;
     }

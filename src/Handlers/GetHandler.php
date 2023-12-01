@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace Medas\HttpFileServer\Handlers;
 
 use Medas\Core\Attributes\Service;
-use Medas\HttpFileServer\{Request, Response, Server};
+use Medas\HttpFileServer\{MimetypeManager, Request, Response, Server};
 
 #[Service]
 readonly class GetHandler
 {
+    public function __construct(
+        private MimetypeManager $mimetypeManager,
+    )
+    {
+    }
+
     public function handle(Server $server, Request $request): Response
     {
         $path = $server->directory
@@ -24,7 +30,11 @@ readonly class GetHandler
             'null' => new Response(204),
             'size' => new Response(200, filesize($path)),
             'modificationTime' => new Response(200, filemtime($path)),
-            default => new Response(200, file_get_contents($path)),
+            default => new Response(
+                200,
+                file_get_contents($path),
+                $this->mimetypeManager->forFile($path)
+            ),
         };
     }
 }

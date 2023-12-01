@@ -13,7 +13,8 @@
     "require": {
         "morphp/medas-core": "dev-dev",
         "morphp/medas-http-client": "dev-dev",
-        "morphp/medas-http-request-handler": "dev-dev"
+        "morphp/medas-http-request-handler": "dev-dev",
+        "ext-fileinfo": "*"
     },
     "require-dev": {
         "morphp/medas-config-manager": "dev-dev",

@@ -7,9 +7,9 @@ namespace Medas\HttpFileServer;
 readonly class Request
 {
     public function __construct(
-        public string $path,
-        public array  $arguments,
-        public string $bodyPath,
+        public string      $path,
+        public array       $arguments,
+        public string      $bodyPath,
         public string|null $bodyEncoding,
     )
     {
