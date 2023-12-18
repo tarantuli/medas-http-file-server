@@ -11,6 +11,7 @@ readonly class Request
         public array       $arguments,
         public string      $bodyPath,
         public string|null $bodyEncoding,
+        public array       $headers,
     )
     {
     }

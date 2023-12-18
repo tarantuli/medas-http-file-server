@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Medas\HttpFileServer;
 
+use Medas\ApiKeys\ApiKeysPackage;
 use Medas\Core\AsSingleton;
 use Medas\FileSystem\FileSystemPackage;
 use Medas\HttpClient\HttpClientPackage;
@@ -16,6 +17,7 @@ class HttpFileServerPackage extends BasePackage
     public function dependencies(): array
     {
         return [
+            ApiKeysPackage::instance(),
             FileSystemPackage::instance(),
             HttpClientPackage::instance(),
         ];

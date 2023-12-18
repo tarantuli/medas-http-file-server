@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Medas\HttpFileServer;
 
-use Medas\Core\Attributes\Service;
+use Medas\Core\{Attributes\Service, Interfaces\EventDispatcher};
 
 #[Service]
 readonly class RequestHandler
 {
     public function __construct(
+        private EventDispatcher        $eventDispatcher,
         private Handlers\DeleteHandler $deleteHandler,
         private Handlers\GetHandler    $getHandler,
         private Handlers\PostHandler   $postHandler,
@@ -20,19 +21,38 @@ readonly class RequestHandler
 
     public function handle(Server $server, string $method, array $arguments): void
     {
-        try {
-            $request = $this->requestManager->compile($arguments);
-            $response = match (strtoupper($method)) {
-                'GET' => $this->getHandler->handle($server, $request),
-                'POST' => $this->postHandler->handle($server, $request),
-                'DELETE' => $this->deleteHandler->handle($server, $request),
-                default => new Response(400),
-            };
+        $request = $this->requestManager->compile($arguments);
+        $response = $this->getResponse($request, $method, $server);
+
+        $this->outputResponse($response);
+    }
+
+    private function getResponse(Request $request, string $method, Server $server): Response
+    {
+        $authVote = $this->eventDispatcher->dispatch(new Access\AuthVote($request));
+
+        if ($authVote->allowedAccess !== true) {
+            $response = new Response(403);
         }
-        catch (\Exception $exception) {
-            $response = new Response(500, $exception->getMessage());
+        else {
+            try {
+                $response = match (strtoupper($method)) {
+                    'GET' => $this->getHandler->handle($server, $request),
+                    'POST' => $this->postHandler->handle($server, $request),
+                    'DELETE' => $this->deleteHandler->handle($server, $request),
+                    default => new Response(400),
+                };
+            }
+            catch (\Exception $exception) {
+                $response = new Response(500, $exception->getMessage());
+            }
         }
 
+        return $response;
+    }
+
+    private function outputResponse(Response $response): void
+    {
         http_response_code($response->code);
 
         if ($response->type !== null) {

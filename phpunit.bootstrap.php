@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 use Medas\ConfigManager\ConfigManagerPackage;
 use Medas\ConfigOptions\ConfigOptionsPackage;
+use Medas\Events\EventsPackage;
 use Medas\FileSystem\FileSystemPackage;
 use Medas\HttpFileClient\HttpFileClientPackage;
 use Medas\HttpFileServer\HttpFileServerPackage;
+use Medas\JsonStorage\JsonStoragePackage;
+use Medas\JsonStorage\StorageDirectory;
+use Medas\StorageManager\StorageManager;
+use Medas\StorageManager\StorageManagerPackage;
 use Medas\ServiceManager\{ServiceConfig, ServiceManager};
 
 chdir(__DIR__);
@@ -19,10 +24,17 @@ new ServiceManager(function (): ServiceConfig {
     $config->addPackages([
         ConfigManagerPackage::instance(),
         ConfigOptionsPackage::instance(),
+        EventsPackage::instance(),
         FileSystemPackage::instance(),
+        JsonStoragePackage::instance(),
         HttpFileClientPackage::instance(),
         HttpFileServerPackage::instance(),
+        StorageManagerPackage::instance(),
     ]);
 
     return $config;
 });
+
+service(StorageManager::class)->add(
+    new StorageDirectory(__DIR__ . '/tests/Storage', 'test-storage')
+);
