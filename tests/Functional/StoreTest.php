@@ -25,7 +25,6 @@ class StoreTest extends BaseTestClass
         );
 
         self::assertTrue($response);
-
         self::assertEquals($content, file_get_contents($path));
     }
 }
