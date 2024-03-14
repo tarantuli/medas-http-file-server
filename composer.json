@@ -1,6 +1,10 @@
 {
     "name": "morphp/medas-http-file-server",
     "description": "Medas http file server",
+    "keywords": [
+        "http",
+        "storage"
+    ],
     "authors": [
         {
             "name": "Patrick Morpey",
