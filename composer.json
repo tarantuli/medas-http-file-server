@@ -18,6 +18,7 @@
         "morphp/medas-api-keys": "dev-dev",
         "morphp/medas-core": "dev-dev",
         "morphp/medas-file-system": "dev-dev",
+        "morphp/medas-files": "dev-dev",
         "morphp/medas-http-client": "dev-dev",
         "ext-fileinfo": "*"
     },
@@ -25,8 +26,8 @@
         "morphp/medas-config-manager": "dev-dev",
         "morphp/medas-config-options": "dev-dev",
         "morphp/medas-events": "dev-dev",
-        "morphp/medas-json-storage": "dev-dev",
         "morphp/medas-http-file-client": "dev-dev",
+        "morphp/medas-json-storage": "dev-dev",
         "morphp/medas-service-manager": "dev-dev",
         "phpunit/phpunit": "^9.5"
     },

@@ -6,6 +6,7 @@ namespace Medas\HttpFileServer;
 
 use Medas\ApiKeys\ApiKeysPackage;
 use Medas\Core\AsSingleton;
+use Medas\Files\FilesPackage;
 use Medas\FileSystem\FileSystemPackage;
 use Medas\HttpClient\HttpClientPackage;
 use Medas\ServiceManager\BasePackage;
@@ -18,6 +19,7 @@ class HttpFileServerPackage extends BasePackage
     {
         return [
             ApiKeysPackage::instance(),
+            FilesPackage::instance(),
             FileSystemPackage::instance(),
             HttpClientPackage::instance(),
         ];

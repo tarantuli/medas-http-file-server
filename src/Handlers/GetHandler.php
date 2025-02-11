@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Medas\HttpFileServer\Handlers;
 
 use Medas\Core\Attributes\Service;
-use Medas\HttpFileServer\{MimetypeManager, Request, Response, Server};
+use Medas\Files\MimetypeManager;
+use Medas\HttpFileServer\{Request, Response, Server};
 
 #[Service]
 readonly class GetHandler
@@ -33,7 +34,7 @@ readonly class GetHandler
             default => new Response(
                 200,
                 file_get_contents($path),
-                $this->mimetypeManager->forFile($path)
+                $this->mimetypeManager->forFilePath($path)
             ),
         };
     }

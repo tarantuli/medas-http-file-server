@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Medas\HttpFileServer;
 
-use Medas\ApiKeys\AuthHeaderVote;
 use Medas\Core\{Attributes\Service, Interfaces\EventDispatcher};
 
 #[Service]
@@ -30,7 +29,8 @@ readonly class RequestHandler
 
     private function getResponse(Request $request, string $method, Server $server): Response
     {
-        $authVote = $this->eventDispatcher->dispatch(new AuthHeaderVote($request->headers['Authorization'] ?? null));
+        $authVote
+            = $this->eventDispatcher->dispatch(new Access\AuthHeaderVote($request->headers['Authorization'] ?? null));
 
         if ($authVote->allowedAccess !== true) {
             $response = new Response(403);
