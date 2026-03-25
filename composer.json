@@ -1,40 +1,43 @@
 {
-    "name": "morphp/medas-http-file-server",
-    "description": "Medas http file server",
-    "keywords": [
-        "http",
-        "storage"
-    ],
-    "authors": [
-        {
-            "name": "Patrick Morpey",
-            "email": "patrick@morphp.nl"
-        }
-    ],
-    "type": "library",
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "require": {
-        "morphp/medas-api-keys": "dev-dev",
-        "morphp/medas-core": "dev-dev",
-        "morphp/medas-file-system": "dev-dev",
-        "morphp/medas-files": "dev-dev",
-        "morphp/medas-http-client": "dev-dev",
-        "ext-fileinfo": "*"
-    },
-    "require-dev": {
-        "morphp/medas-config-manager": "dev-dev",
-        "morphp/medas-config-options": "dev-dev",
-        "morphp/medas-events": "dev-dev",
-        "morphp/medas-http-file-client": "dev-dev",
-        "morphp/medas-json-storage": "dev-dev",
-        "morphp/medas-service-manager": "dev-dev",
-        "phpunit/phpunit": "^9.5"
-    },
-    "autoload": {
-        "psr-4": {
-            "Medas\\HttpFileServer\\": "src/",
-            "Medas\\HttpFileServerTest\\": "tests/"
-        }
+  "name": "morphp/medas-http-file-server",
+  "description": "Medas http file server",
+  "keywords": [
+    "http",
+    "storage"
+  ],
+  "authors": [
+    {
+      "name": "Patrick Morpey",
+      "email": "patrick@morphp.nl"
     }
+  ],
+  "type": "library",
+  "require": {
+    "morphp/medas-api-keys": "^3",
+    "morphp/medas-core": "^3",
+    "morphp/medas-file-system": "^3",
+    "morphp/medas-files": "^3",
+    "morphp/medas-http-client": "^3",
+    "ext-fileinfo": "*"
+  },
+  "require-dev": {
+    "morphp/medas-config-manager": "^3",
+    "morphp/medas-config-options": "^3",
+    "morphp/medas-events": "^3",
+    "morphp/medas-http-file-client": "^3",
+    "morphp/medas-json-storage": "^3",
+    "morphp/medas-object-instantiator": "^3",
+    "morphp/medas-service-manager": "^3",
+    "phpunit/phpunit": "^10"
+  },
+  "autoload": {
+    "psr-4": {
+      "Medas\\HttpFileServer\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Medas\\HttpFileServerTest\\": "tests/"
+    }
+  }
 }

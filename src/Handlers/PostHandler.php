@@ -12,8 +12,8 @@ use Medas\HttpFileServer\{Request, Response, Server};
 readonly class PostHandler
 {
     public function __construct(
-        private DirectoryCreator $directoryCreator,
         private BodyHandler      $bodyHandler,
+        private DirectoryCreator $directoryCreator,
     )
     {
     }
