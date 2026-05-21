@@ -13,21 +13,22 @@
   ],
   "type": "library",
   "require": {
+    "ext-fileinfo": "*",
     "morphp/medas-api-keys": "^3",
     "morphp/medas-core": "^3",
-    "morphp/medas-file-system": "^3",
     "morphp/medas-files": "^3",
-    "morphp/medas-http-client": "^3",
-    "ext-fileinfo": "*"
+    "morphp/medas-http-client": "^3"
   },
   "require-dev": {
     "morphp/medas-config-manager": "^3",
     "morphp/medas-config-options": "^3",
     "morphp/medas-events": "^3",
+    "morphp/medas-file-system": "^3",
     "morphp/medas-http-file-client": "^3",
     "morphp/medas-json-storage": "^3",
     "morphp/medas-object-instantiator": "^3",
     "morphp/medas-service-manager": "^3",
+    "morphp/medas-storage-manager": "^3",
     "phpunit/phpunit": "^10"
   },
   "autoload": {
