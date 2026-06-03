@@ -25,10 +25,10 @@
     "morphp/medas-events": "^3",
     "morphp/medas-file-system": "^3",
     "morphp/medas-http-file-client": "^3",
-    "morphp/medas-json-storage": "^3",
+    "morphp/medas-json-storage": "^4",
     "morphp/medas-object-instantiator": "^3",
     "morphp/medas-service-manager": "^3",
-    "morphp/medas-storage-manager": "^3",
+    "morphp/medas-storage-manager": "^4",
     "phpunit/phpunit": "^10"
   },
   "autoload": {
