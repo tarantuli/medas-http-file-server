@@ -20,6 +20,23 @@ readonly class RequestHandler
         private Handlers\GetHandler    $getHandler,
         private Handlers\PostHandler   $postHandler,
 
+        // Injected here, once, and threaded through to each handler's
+        // handle() call below - deliberately NOT constructor-injected into
+        // GetHandler/PostHandler/DeleteHandler individually. There are
+        // (and are meant to be) multiple PathCompiler implementations
+        // (BasicConcatenation, HashedTree), so an unattributed constructor
+        // parameter on each handler would be ambiguous and fail to
+        // resolve at all. (ServiceFinderByType throws
+        // MultipleImplementorsFoundForParameter for a type with more than
+        // one bound implementor and no override.) Giving each handler its
+        // own #[PreferredDefault(...)] would resolve that. However, then
+        // overriding the compiler means updating every handler's binding
+        // in lockstep - miss one, and GET/POST/DELETE silently disagree on
+        // where a given request path lives on disk, which is exactly the
+        // kind of bug that only shows up as "the file I just uploaded
+        // can't be found" days later. Resolving it once here means there
+        // is exactly one place to override and no way for the handlers to
+        // end up with different compilers.
         #[PreferredDefault(Paths\HashedTree::class)]
         private Paths\PathCompiler     $pathCompiler,
         private RequestManager         $requestManager,
@@ -59,6 +76,12 @@ readonly class RequestHandler
 
                     default => new Response(400),
                 };
+            }
+            catch (Exceptions\InvalidPath $exception) {
+                // The client's fault, not the server's - a malformed or
+                // unsafe path (e.g., traversal) should read as a bad
+                // request, not an internal error.
+                $response = new Response(400, $exception->getMessage());
             }
             catch (\Exception $exception) {
                 $response = new Response(500, $exception->getMessage());
