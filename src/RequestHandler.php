@@ -33,6 +33,13 @@ readonly class RequestHandler
             = $this->eventDispatcher->dispatch(new Access\AuthHeaderVote($request->headers['Authorization'] ?? null));
 
         if ($authVote->allowedAccess !== true) {
+            // Deny-by-default: this is a strict identity check against
+            // true, not a falsy check, so a listener that abstains
+            // (leaving allowedAccess at its null default - e.g.,
+            // AuthHeaderVoteHandler when no Authorization header is
+            // present) is treated the same as an explicit denial. Access
+            // is only ever granted by some listener explicitly setting
+            // allowedAccess = true.
             $response = new Response(403);
         }
         else {

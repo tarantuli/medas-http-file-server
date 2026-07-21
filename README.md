@@ -4,7 +4,7 @@ Part of the [Medas framework](https://github.com/tarantuli/medas-core).
 
 ## Description
 
-The server-side counterpart to `medas-http-file-client`. It exposes a directory of files over HTTP with a simple REST API, authenticated via the `medas-api-keys` `name:key` bearer token scheme.
+The server-side counterpart to `medas-http-file-client`. It exposes a directory of files over HTTP with a simple REST API, authenticated via a bearer token validated through `Medas\Core\Interfaces\AuthenticationTokenController` - the same abstraction used for session/user authentication elsewhere in the framework, rather than a dedicated API-key scheme.
 
 `RequestHandler` is the entry point: it dispatches an `AuthHeaderVote` to validate the `Authorization` header, then routes to `GetHandler`, `PostHandler`, or `DeleteHandler` based on the HTTP method. All file paths are resolved relative to the `Server::$directory` root.
 
@@ -19,9 +19,9 @@ The server-side counterpart to `medas-http-file-client`. It exposes a directory 
 | POST   | —                  | 201                  | Store file (JSON body: `{content, modificationTime}`) |
 | DELETE | —                  | 200                  | Delete file                                           |
 
-**Authentication:** every request must include `Authorization: Bearer name:key`. The bearer token is split on `:` and validated via `ApiKeys\Validator`. Requests without a valid token receive a `403`. Requests for non-existent files receive `404`. Exceptions during file operations produce `500`.
+**Authentication:** every request must include `Authorization: Bearer <token>`, where `<token>` is validated via `AuthenticationTokenController::data()`. This package declares no hard dependency on any concrete token controller – it only requires the interface (already part of `medas-core`) and expects the consuming application to have one bound, e.g. `medas-jwt-tokens`' `JwtAuthTokenController`, which `AuthHeaderVoteHandler` falls back to via `#[PreferredDefault]` if nothing else is bound. Requests without a valid token receive a `403`. Requests for non-existent files receive `404`. Exceptions during file operations produce `500`.
 
-`AuthHeaderVoteHandler` listens to `AuthHeaderVote` events. If no `Authorization` header is present, access is passed (for use in development or behind a trusted reverse proxy). If a header is present and fails validation, `stopPropagation` is set so no other listener can override the denial.
+`AuthHeaderVoteHandler` listens to `AuthHeaderVote` events. If no `Authorization` header is present, or if the header fails validation, access is denied (`allowedAccess` is only ever explicitly set to `true` by a successful bearer token check) - `RequestHandler` denies by default and only grants access when some listener explicitly says so. If a header is present and fails validation, `stopPropagation` is also set so no other listener can override the denial.
 
 ## Usage
 
@@ -44,15 +44,15 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Medas\ServiceManager\{ServiceConfig, ServiceManager};
+use Medas\ServiceManager\{ServiceConfigBuilder, ServiceManager};
 use Medas\ObjectInstantiator\ObjectInstantiator;
 use Medas\HttpFileServer\{HttpFileServerPackage, RequestHandler, Server};
 // ... other required packages
 
 chdir(__DIR__ . '/..');
 
-new ServiceManager(function (): ServiceConfig {
-    $config = new ServiceConfig(objectInstantiatorClass: ObjectInstantiator::class);
+new ServiceManager(function (): ServiceConfigBuilder {
+    $config = new ServiceConfigBuilder(objectInstantiatorClass: ObjectInstantiator::class);
 
     $config->addPackages([
         // ... storage and config packages
@@ -80,15 +80,18 @@ use Medas\HttpFileServer\Server;
 $server = new Server(directory: '/var/www/file-storage');
 ```
 
-**Issuing an API key for a client:**
+**Issuing a token for a client:**
 
-```bash
-# Create an API key for a named client
-php bin/medas api-keys:create-key my-client
-# API key: 3f8a2c...
+A token is anything your bound `AuthenticationTokenController` implementation will accept back from `data()`. With `medas-jwt-tokens` as the default:
 
-# The client uses it as: Authorization: Bearer my-client:3f8a2c...
+```php
+use Medas\Core\Interfaces\AuthenticationTokenController;
+
+$token = service(AuthenticationTokenController::class)->create($someAuthenticationData);
+// The client uses it as: Authorization: Bearer <token>
 ```
+
+`$someAuthenticationData` is any `Medas\Core\Interfaces\AuthenticationData` implementation representing the client this token is for.
 
 **Using with `medas-http-file-client`:**
 
@@ -99,7 +102,7 @@ use Medas\HttpFileClient\{Client, ClientManager};
 
 $clientManager->register(new Client(
     url: 'https://files.example.com',
-    authorizationHeader: 'Bearer my-client:3f8a2c...',
+    authorizationHeader: 'Bearer ' . $token,
 ));
 ```
 
@@ -123,6 +126,6 @@ location / {
 
 The request path is taken from `$_REQUEST` (passed as `$arguments` to `RequestHandler::handle()`), so the path must be available as a query parameter or POST field named `path`.
 
-**No Authorization header** — by default `AuthHeaderVoteHandler` allows requests with no `Authorization` header (access is not explicitly denied). To require authentication for all requests, add a higher-priority `#[EventListener]` that denies when `$authVote->allowedAccess` is still `null` after all handlers have run, or run the file server behind a reverse proxy that enforces authentication.
+**No Authorization header** — by default `AuthHeaderVoteHandler` abstains (neither allows nor denies) when no `Authorization` header is present, but `RequestHandler` denies by default whenever nothing has explicitly granted access, so a missing header results in a `403` unless something else in the chain explicitly sets `allowedAccess = true`. To allow specific unauthenticated access, add a higher-priority `#[EventListener]` that explicitly sets `$authVote->allowedAccess = true` for whatever case should be exempt, rather than relying on the absence of denial.
 
 **Storage directory** — ensure the directory configured in `Server::$directory` is writable by the PHP process and is not web-accessible directly (only the file server's own `index.php` should be publicly reachable).

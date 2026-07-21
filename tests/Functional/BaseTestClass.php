@@ -4,23 +4,33 @@ declare(strict_types=1);
 
 namespace Medas\HttpFileServerTest\Functional;
 
-use Medas\ApiKeys\{KeyCreator, KeyStoreManager};
+use Medas\Core\Interfaces\AuthenticationTokenController;
 use Medas\HttpFileClient\Client;
+use Medas\HttpFileServerTest\MockUps\AuthenticationDataMockUp;
 use PHPUnit\Framework\TestCase;
 
 abstract class BaseTestClass extends TestCase
 {
-    private const API_NAME = 'http-file-client';
-
     protected function client(): Client
     {
-        $key = service(KeyCreator::class)->create();
-
-        service(KeyStoreManager::class)->storeKey(self::API_NAME, $key);
-
         return new Client(
             url: 'http://localhost/medas/http-file-server/tests/MockUps',
-            authorizationHeader: 'Bearer ' . self::API_NAME . ':' . $key
+            authorizationHeader: 'Bearer ' . $this->createToken(),
+        );
+    }
+
+    private function createToken(): string
+    {
+        // tokenKey/algorithm are bound once in phpunit.bootstrap.php - see
+        // the comment there.
+        return service(AuthenticationTokenController::class)->create(new AuthenticationDataMockUp());
+    }
+
+    protected function clientWithoutToken(): Client
+    {
+        return new Client(
+            url: 'http://localhost/medas/http-file-server/tests/MockUps',
+            authorizationHeader: null,
         );
     }
 

@@ -31,11 +31,13 @@ readonly class GetHandler
             'null' => new Response(204),
             'size' => new Response(200, filesize($path)),
             'modificationTime' => new Response(200, filemtime($path)),
-            default => new Response(
-                200,
-                file_get_contents($path),
-                $this->mimetypeManager->forFilePath($path)
-            ),
+
+            default
+                => new Response(
+                    200,
+                    file_get_contents($path),
+                    $this->mimetypeManager->forFilePath($path)
+                ),
         };
     }
 }
