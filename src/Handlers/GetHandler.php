@@ -6,7 +6,7 @@ namespace Medas\HttpFileServer\Handlers;
 
 use Medas\Core\Attributes\Service;
 use Medas\Files\MimetypeManager;
-use Medas\HttpFileServer\{Request, Response, Server};
+use Medas\HttpFileServer\{Paths\PathCompiler, Request, Response, Server};
 
 #[Service]
 readonly class GetHandler
@@ -17,11 +17,9 @@ readonly class GetHandler
     {
     }
 
-    public function handle(Server $server, Request $request): Response
+    public function handle(Server $server, Request $request, PathCompiler $pathCompiler): Response
     {
-        $path = $server->directory
-            . DIRECTORY_SEPARATOR
-            . str_replace('/', DIRECTORY_SEPARATOR, $request->path);
+        $path = $pathCompiler->compile($server, $request);
 
         if (!file_exists($path)) {
             return new Response(404);

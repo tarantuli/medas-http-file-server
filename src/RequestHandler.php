@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace Medas\HttpFileServer;
 
-use Medas\Core\{Attributes\Service, Interfaces\EventDispatcher};
+use Medas\Core\{
+    Attributes\PreferredDefault,
+    Attributes\Service,
+    Events\AllowedAccess,
+    Interfaces\EventDispatcher
+};
 
 #[Service]
 readonly class RequestHandler
@@ -14,6 +19,9 @@ readonly class RequestHandler
         private Handlers\DeleteHandler $deleteHandler,
         private Handlers\GetHandler    $getHandler,
         private Handlers\PostHandler   $postHandler,
+
+        #[PreferredDefault(Paths\HashedTree::class)]
+        private Paths\PathCompiler     $pathCompiler,
         private RequestManager         $requestManager,
     )
     {
@@ -29,25 +37,26 @@ readonly class RequestHandler
 
     private function getResponse(Request $request, string $method, Server $server): Response
     {
-        $authVote
-            = $this->eventDispatcher->dispatch(new Access\AuthHeaderVote($request->headers['Authorization'] ?? null));
+        $authVote = $this->eventDispatcher->dispatch(new Access\AuthHeaderVote($request));
 
-        if ($authVote->allowedAccess !== true) {
-            // Deny-by-default: this is a strict identity check against
-            // true, not a falsy check, so a listener that abstains
-            // (leaving allowedAccess at its null default - e.g.,
-            // AuthHeaderVoteHandler when no Authorization header is
-            // present) is treated the same as an explicit denial. Access
-            // is only ever granted by some listener explicitly setting
-            // allowedAccess = true.
+        if ($authVote->allowedAccess !== AllowedAccess::Allowed) {
+            // Deny-by-default: BasicVote only stops propagation on an
+            // explicit Denied vote (deny-overrides semantics), so
+            // Pending/Unauthenticated - an abstained or inconclusive vote.
+            // e.g., AuthHeaderVoteHandler when no Authorization header is
+            // present - are just as much "not authorized" as an explicit
+            // Denied. Only an explicit Allowed vote passes.
             $response = new Response(403);
         }
         else {
             try {
                 $response = match (strtoupper($method)) {
-                    'GET' => $this->getHandler->handle($server, $request),
-                    'POST' => $this->postHandler->handle($server, $request),
-                    'DELETE' => $this->deleteHandler->handle($server, $request),
+                    'GET' => $this->getHandler->handle($server, $request, $this->pathCompiler),
+                    'POST' => $this->postHandler->handle($server, $request, $this->pathCompiler),
+
+                    'DELETE'
+                        => $this->deleteHandler->handle($server, $request, $this->pathCompiler),
+
                     default => new Response(400),
                 };
             }

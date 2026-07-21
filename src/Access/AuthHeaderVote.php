@@ -4,22 +4,14 @@ declare(strict_types=1);
 
 namespace Medas\HttpFileServer\Access;
 
-use Psr\EventDispatcher\StoppableEventInterface;
+use Medas\Core\Events\BasicVote;
+use Medas\HttpFileServer\Request;
 
-class AuthHeaderVote implements StoppableEventInterface
+class AuthHeaderVote extends BasicVote
 {
-    public bool|null $allowedAccess = null;
-    public bool $stopPropagation = false;
-    public string|null $name = null;
-
     public function __construct(
-        public string|null $authorizationHeader,
+        public Request $request,
     )
     {
-    }
-
-    public function isPropagationStopped(): bool
-    {
-        return $this->stopPropagation;
     }
 }

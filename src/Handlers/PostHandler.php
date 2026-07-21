@@ -6,7 +6,7 @@ namespace Medas\HttpFileServer\Handlers;
 
 use Medas\Core\{Attributes\Service, Interfaces\DirectoryCreator};
 use Medas\HttpClient\BodyHandler;
-use Medas\HttpFileServer\{Request, Response, Server};
+use Medas\HttpFileServer\{Paths\PathCompiler, Request, Response, Server};
 
 #[Service]
 readonly class PostHandler
@@ -18,11 +18,9 @@ readonly class PostHandler
     {
     }
 
-    public function handle(Server $server, Request $request): Response
+    public function handle(Server $server, Request $request, PathCompiler $pathCompiler): Response
     {
-        $path = $server->directory
-            . DIRECTORY_SEPARATOR
-            . str_replace('/', DIRECTORY_SEPARATOR, $request->path);
+        $path = $pathCompiler->compile($server, $request);
 
         $this->directoryCreator->create(pathinfo($path, PATHINFO_DIRNAME));
 

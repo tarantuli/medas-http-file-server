@@ -7,6 +7,7 @@ namespace Medas\HttpFileServer\Access;
 use Medas\Core\{
     Attributes\EventListener,
     Attributes\Service,
+    Events\AllowedAccess,
     Interfaces\AuthenticationTokenController
 };
 
@@ -22,7 +23,9 @@ readonly class AuthHeaderVoteHandler
     #[EventListener]
     public function handleRequest(AuthHeaderVote $authVote): void
     {
-        if ($authVote->authorizationHeader === null) {
+        $authHeader = $authVote->request->headers['Authorization'] ?? null;
+
+        if ($authHeader === null) {
             // No Authorization header - this handler abstains rather than
             // explicitly allowing or denying. RequestHandler treats an
             // abstained (still-null) vote as denied by default - see the
@@ -33,13 +36,13 @@ readonly class AuthHeaderVoteHandler
             return;
         }
 
-        if (!str_starts_with($authVote->authorizationHeader, 'Bearer ')) {
+        if (!str_starts_with($authHeader, 'Bearer ')) {
             $this->disallow($authVote);
 
             return;
         }
 
-        $token = substr($authVote->authorizationHeader, 7);
+        $token = substr($authHeader, 7);
 
         if ($this->tokenController->data($token) === null) {
             $this->disallow($authVote);
@@ -47,12 +50,11 @@ readonly class AuthHeaderVoteHandler
             return;
         }
 
-        $authVote->allowedAccess = true;
+        $authVote->allowedAccess = AllowedAccess::Allowed;
     }
 
     private function disallow(AuthHeaderVote $authVote): void
     {
-        $authVote->allowedAccess = false;
-        $authVote->stopPropagation = true;
+        $authVote->allowedAccess = AllowedAccess::Denied;
     }
 }
