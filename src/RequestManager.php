@@ -29,8 +29,8 @@ readonly class RequestManager
 
         $path = substr($_SERVER['REQUEST_URI'], $pathOffset + 1);
 
-        if (false !== $pos = strpos($_GET['path'], '?')) {
-            $path = substr($_GET['path'], 0, $pos);
+        if (false !== $pos = strpos($path, '?')) {
+            $path = substr($path, 0, $pos);
         }
 
         return $path;
