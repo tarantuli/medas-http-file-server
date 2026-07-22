@@ -9,19 +9,31 @@ use Medas\Core\{Attributes\Service, Identifier};
 #[Service]
 readonly class RequestManager
 {
-    public function compile(array $arguments): Request
+    public function compile(): Request
     {
-        $path = $arguments['path'];
-
-        unset($arguments['path']);
-
         return new Request(
-            $path,
-            $arguments,
+            $_SERVER['REQUEST_METHOD'] ?? null,
+            $this->determinePath(),
+            $_GET['return'] ?? null,
             'php://input',
             $_SERVER['CONTENT_TYPE'] ?? null,
             $this->gatherHeaders()
         );
+    }
+
+    private function determinePath(): string
+    {
+        $pathOffset = array_key_exists('REDIRECT_BASE', $_SERVER)
+            ? strlen($_SERVER['REDIRECT_BASE'])
+            : 0;
+
+        $path = substr($_SERVER['REQUEST_URI'], $pathOffset + 1);
+
+        if (false !== $pos = strpos($_GET['path'], '?')) {
+            $path = substr($_GET['path'], 0, $pos);
+        }
+
+        return $path;
     }
 
     private function gatherHeaders(): array

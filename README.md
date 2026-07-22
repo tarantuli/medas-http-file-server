@@ -65,9 +65,7 @@ new ServiceManager(function (): ServiceConfigBuilder {
 $server = new Server(directory: __DIR__ . '/../../storage');
 
 service(RequestHandler::class)->handle(
-    server: $server,
-    method: $_SERVER['REQUEST_METHOD'],
-    arguments: $_REQUEST,
+    server: $server
 );
 ```
 

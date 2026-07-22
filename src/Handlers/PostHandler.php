@@ -24,10 +24,13 @@ readonly class PostHandler
 
         $this->directoryCreator->create(pathinfo($path, PATHINFO_DIRNAME));
 
-        $body = $this->bodyHandler->parseString(
-            file_get_contents($request->bodyPath),
-            $request->bodyEncoding
-        );
+        $rawBody = file_get_contents($request->bodyPath);
+
+        if (false === $rawBody) {
+            return new Response(400);
+        }
+
+        $body = $this->bodyHandler->parseString($rawBody, $request->bodyEncoding);
 
         if (false === file_put_contents($path, $body['content'])) {
             return new Response(400);

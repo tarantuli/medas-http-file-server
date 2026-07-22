@@ -25,7 +25,7 @@ readonly class GetHandler
             return new Response(404);
         }
 
-        return match ($request->arguments['return'] ?? null) {
+        return match ($request->returnType) {
             'null' => new Response(204),
             'size' => new Response(200, filesize($path)),
             'modificationTime' => new Response(200, filemtime($path)),

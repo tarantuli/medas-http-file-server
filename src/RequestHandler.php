@@ -44,51 +44,12 @@ readonly class RequestHandler
     {
     }
 
-    public function handle(Server $server, string $method, array $arguments): void
+    public function handle(Server $server): void
     {
-        $request = $this->requestManager->compile($arguments);
-        $response = $this->getResponse($request, $method, $server);
+        $request = $this->requestManager->compile();
+        $response = $this->handleRequest($server, $request);
 
         $this->outputResponse($response);
-    }
-
-    private function getResponse(Request $request, string $method, Server $server): Response
-    {
-        $authVote = $this->eventDispatcher->dispatch(new Access\AuthHeaderVote($request));
-
-        if ($authVote->allowedAccess !== AllowedAccess::Allowed) {
-            // Deny-by-default: BasicVote only stops propagation on an
-            // explicit Denied vote (deny-overrides semantics), so
-            // Pending/Unauthenticated - an abstained or inconclusive vote.
-            // e.g., AuthHeaderVoteHandler when no Authorization header is
-            // present - are just as much "not authorized" as an explicit
-            // Denied. Only an explicit Allowed vote passes.
-            $response = new Response(403);
-        }
-        else {
-            try {
-                $response = match (strtoupper($method)) {
-                    'GET' => $this->getHandler->handle($server, $request, $this->pathCompiler),
-                    'POST' => $this->postHandler->handle($server, $request, $this->pathCompiler),
-
-                    'DELETE'
-                        => $this->deleteHandler->handle($server, $request, $this->pathCompiler),
-
-                    default => new Response(400),
-                };
-            }
-            catch (Exceptions\InvalidPath $exception) {
-                // The client's fault, not the server's - a malformed or
-                // unsafe path (e.g., traversal) should read as a bad
-                // request, not an internal error.
-                $response = new Response(400, $exception->getMessage());
-            }
-            catch (\Exception $exception) {
-                $response = new Response(500, $exception->getMessage());
-            }
-        }
-
-        return $response;
     }
 
     private function outputResponse(Response $response): void
@@ -100,5 +61,38 @@ readonly class RequestHandler
         }
 
         echo $response->content;
+    }
+
+    public function handleRequest(Server $server, Request $request): Response
+    {
+        $authVote = $this->eventDispatcher->dispatch(new Access\AuthHeaderVote($request));
+
+        if ($authVote->allowedAccess !== AllowedAccess::Allowed) {
+            // Deny-by-default: BasicVote only stops propagation on an
+            // explicit Denied vote (deny-overrides semantics), so
+            // Pending/Unauthenticated - an abstained or inconclusive vote.
+            // e.g., AuthHeaderVoteHandler when no Authorization header is
+            // present - are just as much "not authorized" as an explicit
+            // Denied. Only an explicit Allowed vote passes.
+            return new Response(403);
+        }
+
+        try {
+            return match (strtoupper($request->method)) {
+                'GET' => $this->getHandler->handle($server, $request, $this->pathCompiler),
+                'POST' => $this->postHandler->handle($server, $request, $this->pathCompiler),
+                'DELETE' => $this->deleteHandler->handle($server, $request, $this->pathCompiler),
+                default => new Response(400),
+            };
+        }
+        catch (Exceptions\InvalidPath $exception) {
+            // The client's fault, not the server's - a malformed or
+            // unsafe path (e.g., traversal) should read as a bad
+            // request, not an internal error.
+            return new Response(400, $exception->getMessage());
+        }
+        catch (\Exception $exception) {
+            return new Response(500, $exception->getMessage());
+        }
     }
 }
