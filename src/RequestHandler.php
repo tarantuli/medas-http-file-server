@@ -15,10 +15,11 @@ use Medas\Core\{
 readonly class RequestHandler
 {
     public function __construct(
-        private EventDispatcher        $eventDispatcher,
-        private Handlers\DeleteHandler $deleteHandler,
-        private Handlers\GetHandler    $getHandler,
-        private Handlers\PostHandler   $postHandler,
+        private EventDispatcher         $eventDispatcher,
+        private Handlers\DeleteHandler  $deleteHandler,
+        private Handlers\GetHandler     $getHandler,
+        private Handlers\OptionsHandler $optionsHandler,
+        private Handlers\PostHandler    $postHandler,
 
         // Injected here, once, and threaded through to each handler's
         // handle() call below - deliberately NOT constructor-injected into
@@ -38,8 +39,8 @@ readonly class RequestHandler
         // is exactly one place to override and no way for the handlers to
         // end up with different compilers.
         #[PreferredDefault(Paths\HashedTree::class)]
-        private Paths\PathCompiler     $pathCompiler,
-        private RequestManager         $requestManager,
+        private Paths\PathCompiler      $pathCompiler,
+        private RequestManager          $requestManager,
     )
     {
     }
@@ -47,7 +48,18 @@ readonly class RequestHandler
     public function handle(Server $server): void
     {
         $request = $this->requestManager->compile();
+
+        // A preflight request doesn't need to reach the GET/POST/DELETE handlers at
+        // all - the browser only sends the real request afterward, once
+        // the preflight response confirms it's allowed to.
+        if (strtoupper($request->method) === 'OPTIONS') {
+            $this->outputResponse($this->optionsHandler->handle());
+
+            return;
+        }
+
         $response = $this->handleRequest($server, $request);
+        $response = $this->optionsHandler->addCorsHeaders($response);
 
         $this->outputResponse($response);
     }
@@ -58,6 +70,10 @@ readonly class RequestHandler
 
         if ($response->type !== null) {
             header(sprintf('Content-type: %s', $response->type));
+        }
+
+        foreach ($response->headers as $name => $value) {
+            header(sprintf('%s: %s', $name, $value));
         }
 
         echo $response->content;
