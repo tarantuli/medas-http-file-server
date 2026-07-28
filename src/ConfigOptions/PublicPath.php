@@ -27,7 +27,7 @@ readonly class PublicPath implements ConfigOption
 
     public function description(): string
     {
-        return 'The local path to the public directory';
+        return 'The local path to the public directory. Must end in a slash if not equal to an empty string';
     }
 
     public function hasDefault(): bool

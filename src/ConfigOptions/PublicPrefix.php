@@ -27,7 +27,7 @@ readonly class PublicPrefix implements ConfigOption
 
     public function description(): string
     {
-        return 'The path prefix of public files';
+        return 'The path prefix of public files. Must end in a slash';
     }
 
     public function hasDefault(): bool
@@ -37,6 +37,6 @@ readonly class PublicPrefix implements ConfigOption
 
     public function default(): string
     {
-        return 'public';
+        return 'public/';
     }
 }

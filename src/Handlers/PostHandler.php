@@ -34,12 +34,12 @@ readonly class PostHandler
 
     public function handle(Server $server, Request $request, PathCompiler $pathCompiler): Response
     {
-        if (str_starts_with($request->path, $this->publicPrefix . '/')) {
+        if (str_starts_with($request->path, $this->publicPrefix)) {
             if ($this->publicPath === null) {
                 throw new PublicPathNotSet();
             }
 
-            $path = $this->publicPath . '/' . $request->path;
+            $path = $this->publicPath . $request->path;
         }
         else {
             $path = $pathCompiler->compile($server, $request);
