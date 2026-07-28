@@ -4,11 +4,18 @@ declare(strict_types=1);
 
 namespace Medas\HttpFileServer;
 
-use Medas\Core\{Attributes\Service, Identifier};
+use Medas\Core\{Attributes\ConfigValue, Attributes\Service, Identifier};
 
 #[Service]
 readonly class RequestManager
 {
+    public function __construct(
+        #[ConfigValue(ConfigOptions\ScriptNameSuffix::class)]
+        private string $scriptNameSuffix,
+    )
+    {
+    }
+
     public function compile(): Request
     {
         return new Request(
@@ -23,17 +30,27 @@ readonly class RequestManager
 
     private function determinePath(): string
     {
-        $pathOffset = array_key_exists('REDIRECT_BASE', $_SERVER)
-            ? strlen($_SERVER['REDIRECT_BASE'])
-            : 0;
+        // SCRIPT_NAME is a standard SAPI variable, always present, and for
+        // this front-controller layout is always <mount><suffix>, where <suffix> is
+        // a known constant. Deriving the mount point from it is immune to Apache's REDIRECT_
+        // prefixing quirks. (Whether a custom env var like BASE keeps its
+        // name or gets prefixed depends on exactly how many internal
+        // rewrite passes happened, which isn't reliably stable.)
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
 
-        $path = substr($_SERVER['REQUEST_URI'], $pathOffset + 1);
+        $mount = preg_replace(
+            '#' . preg_quote($this->scriptNameSuffix, '#') . '$#',
+            '',
+            $scriptName
+        );
 
-        if (false !== $pos = strpos($path, '?')) {
-            $path = substr($path, 0, $pos);
-        }
+        $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
 
-        return $path;
+        $path = ($mount !== '' && str_starts_with($requestPath, $mount))
+            ? substr($requestPath, strlen($mount))
+            : $requestPath;
+
+        return ltrim($path, '/');
     }
 
     private function gatherHeaders(): array
