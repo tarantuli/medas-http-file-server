@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace Medas\HttpFileServer\Handlers;
 
-use Medas\Core\{Attributes\ConfigValue, Attributes\Service, Interfaces\DirectoryCreator};
+use Medas\Core\{
+    Attributes\ConfigValue,
+    Attributes\Service,
+    Events\DebugInformation,
+    Interfaces\DirectoryCreator
+};
 use Medas\HttpClient\BodyHandler;
 use Medas\HttpFileServer\{
     ConfigOptions\PublicPath,
@@ -44,6 +49,14 @@ readonly class PostHandler
         else {
             $path = $pathCompiler->compile($server, $request);
         }
+
+        dispatch(new DebugInformation(
+            '[http-file-server] derived path %s from source %s (public prefix is %s, public path is %s)',
+            $path,
+            $request->path,
+            $this->publicPrefix,
+            $this->publicPath
+        ));
 
         $this->directoryCreator->create(pathinfo($path, PATHINFO_DIRNAME));
 
